@@ -5,7 +5,8 @@ A voice-first mobile health app focused on personalized outdoor excursions and n
 ## Tech Stack
 
 - Expo SDK 54
-- React Native 0.76.5
+- React Native 0.81.5
+- React 19.1.0
 - expo-router v4
 - Supabase (Auth + Database)
 - OpenAI Assistants API
