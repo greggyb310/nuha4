@@ -115,6 +115,8 @@ export default function SignUpScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             autoComplete="email"
+            textContentType="username"
+            autoCorrect={false}
             leftIcon={<Mail size={20} color={colors.textSecondary} />}
           />
 
@@ -126,6 +128,7 @@ export default function SignUpScreen() {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password-new"
+            textContentType="newPassword"
             leftIcon={<Lock size={20} color={colors.textSecondary} />}
             helperText="At least 8 characters"
           />
@@ -138,6 +141,7 @@ export default function SignUpScreen() {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password-new"
+            textContentType="newPassword"
             leftIcon={<Lock size={20} color={colors.textSecondary} />}
           />
 

@@ -9,6 +9,7 @@
     "ios": {
       "bundleIdentifier": "com.natureup.health4",
       "supportsTablet": false,
+      "associatedDomains": ["webcredentials:natureup.health"],
       "infoPlist": {
         "NSMicrophoneUsageDescription": "NatureUP Health needs access to your microphone for voice coaching sessions.",
         "NSLocationWhenInUseUsageDescription": "NatureUP Health needs your location to suggest nearby nature excursions.",

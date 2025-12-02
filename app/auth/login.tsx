@@ -89,6 +89,8 @@ export default function LoginScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             autoComplete="email"
+            textContentType="username"
+            autoCorrect={false}
             leftIcon={<Mail size={20} color={colors.textSecondary} />}
           />
 
@@ -100,6 +102,7 @@ export default function LoginScreen() {
             secureTextEntry
             autoCapitalize="none"
             autoComplete="password"
+            textContentType="password"
             leftIcon={<Lock size={20} color={colors.textSecondary} />}
           />
 
