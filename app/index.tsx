@@ -1,13 +1,49 @@
+import { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+import { useRouter } from 'expo-router';
+import { useAuth } from '../hooks/useAuth';
+import { LoadingSpinner, Button } from '../components';
+import { colors, typography, spacing } from '../constants/theme';
 
 export default function Index() {
+  const router = useRouter();
+  const { isAuthenticated, isLoading, user, signOut } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !isAuthenticated) {
+      router.replace('/auth/login');
+    }
+  }, [isLoading, isAuthenticated]);
+
+  if (isLoading) {
+    return <LoadingSpinner fullScreen message="Loading..." />;
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  const handleSignOut = async () => {
+    await signOut();
+    router.replace('/auth/login');
+  };
+
   return (
     <View style={styles.container}>
-      <StatusBar style="dark" />
       <Text style={styles.greeting}>Hello!</Text>
       <Text style={styles.title}>NatureUP Health</Text>
       <Text style={styles.subtitle}>Your personalized nature therapy companion</Text>
+
+      <View style={styles.userInfo}>
+        <Text style={styles.userEmail}>{user?.email}</Text>
+      </View>
+
+      <Button
+        title="Sign Out"
+        onPress={handleSignOut}
+        variant="outline"
+        style={styles.signOutButton}
+      />
     </View>
   );
 }
@@ -15,28 +51,41 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F8F3',
+    backgroundColor: colors.background,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
+    padding: spacing.lg,
   },
   greeting: {
-    fontSize: 48,
-    fontWeight: '700',
-    color: '#4A7C2E',
-    marginBottom: 24,
+    fontSize: typography.sizes['4xl'],
+    fontWeight: typography.weights.bold,
+    color: colors.primary,
+    marginBottom: spacing.lg,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#2D3E1F',
-    marginBottom: 12,
+    fontSize: typography.sizes['2xl'],
+    fontWeight: typography.weights.semibold,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 16,
-    color: '#5A6C4A',
+    fontSize: typography.sizes.base,
+    color: colors.textSecondary,
     textAlign: 'center',
-    lineHeight: 24,
+    lineHeight: typography.lineHeights.normal * typography.sizes.base,
+  },
+  userInfo: {
+    marginTop: spacing.xl,
+    padding: spacing.md,
+    backgroundColor: colors.surface,
+    borderRadius: spacing.sm,
+  },
+  userEmail: {
+    fontSize: typography.sizes.sm,
+    color: colors.textSecondary,
+  },
+  signOutButton: {
+    marginTop: spacing.lg,
   },
 });
