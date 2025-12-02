@@ -33,7 +33,7 @@
         "projectId": "your-project-id-here"
       },
       "supabaseUrl": "https://shdakxvwvnmhkofdjlxs.supabase.co",
-      "supabaseAnonKey": "PLACEHOLDER_UPDATE_WITH_REAL_KEY"
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNoZGFreHZ3dm5taGtvZmRqbHhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQ2NDQ1ODUsImV4cCI6MjA4MDIyMDU4NX0.VE3KHKUUywniB7SSfc3bomT7jkXkYnX8KwcVKmry8-c"
     }
   }
 }
