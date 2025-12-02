@@ -1,11 +1,46 @@
+export interface Database {
+  public: {
+    Tables: {
+      user_profiles: {
+        Row: UserProfile;
+        Insert: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>;
+        Update: Partial<Omit<UserProfile, 'id' | 'created_at'>>;
+      };
+      excursions: {
+        Row: Excursion;
+        Insert: Omit<Excursion, 'id' | 'created_at'>;
+        Update: Partial<Omit<Excursion, 'id' | 'created_at' | 'user_id'>>;
+      };
+      conversations: {
+        Row: Conversation;
+        Insert: Omit<Conversation, 'id' | 'created_at'>;
+        Update: Partial<Omit<Conversation, 'id' | 'created_at' | 'user_id'>>;
+      };
+      favorite_excursions: {
+        Row: FavoriteExcursion;
+        Insert: Omit<FavoriteExcursion, 'id' | 'created_at'>;
+        Update: Partial<Omit<FavoriteExcursion, 'id' | 'created_at'>>;
+      };
+    };
+  };
+}
+
 export interface UserProfile {
   id: string;
   user_id: string;
   full_name: string | null;
   health_goals: string[] | null;
-  preferences: Record<string, any> | null;
+  preferences: UserPreferences | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface UserPreferences {
+  preferred_terrain?: 'forest' | 'beach' | 'mountain' | 'park' | 'urban';
+  preferred_time?: 'morning' | 'afternoon' | 'evening';
+  max_distance_km?: number;
+  fitness_level?: 'beginner' | 'intermediate' | 'advanced';
+  accessibility_needs?: string[];
 }
 
 export interface Excursion {
@@ -13,12 +48,34 @@ export interface Excursion {
   user_id: string;
   title: string;
   description: string | null;
-  route_data: Record<string, any>;
+  route_data: RouteData;
   duration_minutes: number | null;
   distance_km: number | null;
   difficulty: 'easy' | 'moderate' | 'challenging' | null;
   created_at: string;
   completed_at: string | null;
+}
+
+export interface RouteData {
+  waypoints: Waypoint[];
+  start_location: Location;
+  end_location: Location;
+  terrain_type?: string;
+  elevation_gain?: number;
+}
+
+export interface Waypoint {
+  latitude: number;
+  longitude: number;
+  name?: string;
+  description?: string;
+  order: number;
+}
+
+export interface Location {
+  latitude: number;
+  longitude: number;
+  address?: string;
 }
 
 export interface Conversation {
@@ -37,3 +94,6 @@ export interface FavoriteExcursion {
   excursion_id: string;
   created_at: string;
 }
+
+export type AssistantType = 'health_coach' | 'excursion_creator';
+export type Difficulty = 'easy' | 'moderate' | 'challenging';

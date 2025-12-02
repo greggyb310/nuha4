@@ -1,8 +1,20 @@
 import { supabase } from './supabase';
-import type { UserProfile, Excursion, Conversation, FavoriteExcursion } from '../types/database';
+import type {
+  UserProfile,
+  Excursion,
+  Conversation,
+  FavoriteExcursion,
+  AssistantType
+} from '../types/database';
+import type { PostgrestError } from '@supabase/supabase-js';
+
+export interface DatabaseResponse<T> {
+  data: T | null;
+  error: PostgrestError | null;
+}
 
 export const databaseService = {
-  async getUserProfile(userId: string) {
+  async getUserProfile(userId: string): Promise<DatabaseResponse<UserProfile>> {
     const { data, error } = await supabase
       .from('user_profiles')
       .select('*')
@@ -11,7 +23,7 @@ export const databaseService = {
     return { data: data as UserProfile | null, error };
   },
 
-  async createUserProfile(profile: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>) {
+  async createUserProfile(profile: Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>): Promise<DatabaseResponse<UserProfile>> {
     const { data, error } = await supabase
       .from('user_profiles')
       .insert(profile)
@@ -20,7 +32,7 @@ export const databaseService = {
     return { data: data as UserProfile | null, error };
   },
 
-  async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
+  async updateUserProfile(userId: string, updates: Partial<UserProfile>): Promise<DatabaseResponse<UserProfile>> {
     const { data, error } = await supabase
       .from('user_profiles')
       .update({ ...updates, updated_at: new Date().toISOString() })
@@ -30,16 +42,34 @@ export const databaseService = {
     return { data: data as UserProfile | null, error };
   },
 
-  async getUserExcursions(userId: string) {
-    const { data, error } = await supabase
+  async getUserExcursions(userId: string, completed?: boolean): Promise<DatabaseResponse<Excursion[]>> {
+    let query = supabase
       .from('excursions')
       .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false });
+      .eq('user_id', userId);
+
+    if (completed !== undefined) {
+      if (completed) {
+        query = query.not('completed_at', 'is', null);
+      } else {
+        query = query.is('completed_at', null);
+      }
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
     return { data: data as Excursion[] | null, error };
   },
 
-  async createExcursion(excursion: Omit<Excursion, 'id' | 'created_at'>) {
+  async getExcursionById(excursionId: string): Promise<DatabaseResponse<Excursion>> {
+    const { data, error } = await supabase
+      .from('excursions')
+      .select('*')
+      .eq('id', excursionId)
+      .maybeSingle();
+    return { data: data as Excursion | null, error };
+  },
+
+  async createExcursion(excursion: Omit<Excursion, 'id' | 'created_at'>): Promise<DatabaseResponse<Excursion>> {
     const { data, error } = await supabase
       .from('excursions')
       .insert(excursion)
@@ -48,7 +78,7 @@ export const databaseService = {
     return { data: data as Excursion | null, error };
   },
 
-  async updateExcursion(excursionId: string, updates: Partial<Excursion>) {
+  async updateExcursion(excursionId: string, updates: Partial<Excursion>): Promise<DatabaseResponse<Excursion>> {
     const { data, error } = await supabase
       .from('excursions')
       .update(updates)
@@ -58,7 +88,17 @@ export const databaseService = {
     return { data: data as Excursion | null, error };
   },
 
-  async deleteExcursion(excursionId: string) {
+  async completeExcursion(excursionId: string): Promise<DatabaseResponse<Excursion>> {
+    const { data, error } = await supabase
+      .from('excursions')
+      .update({ completed_at: new Date().toISOString() })
+      .eq('id', excursionId)
+      .select()
+      .single();
+    return { data: data as Excursion | null, error };
+  },
+
+  async deleteExcursion(excursionId: string): Promise<{ error: PostgrestError | null }> {
     const { error } = await supabase
       .from('excursions')
       .delete()
@@ -66,7 +106,7 @@ export const databaseService = {
     return { error };
   },
 
-  async getUserConversations(userId: string, assistantType?: 'health_coach' | 'excursion_creator') {
+  async getUserConversations(userId: string, assistantType?: AssistantType): Promise<DatabaseResponse<Conversation[]>> {
     let query = supabase
       .from('conversations')
       .select('*')
@@ -80,7 +120,16 @@ export const databaseService = {
     return { data: data as Conversation[] | null, error };
   },
 
-  async createConversation(conversation: Omit<Conversation, 'id' | 'created_at'>) {
+  async getConversationByThreadId(threadId: string): Promise<DatabaseResponse<Conversation>> {
+    const { data, error } = await supabase
+      .from('conversations')
+      .select('*')
+      .eq('thread_id', threadId)
+      .maybeSingle();
+    return { data: data as Conversation | null, error };
+  },
+
+  async createConversation(conversation: Omit<Conversation, 'id' | 'created_at'>): Promise<DatabaseResponse<Conversation>> {
     const { data, error } = await supabase
       .from('conversations')
       .insert(conversation)
@@ -89,7 +138,7 @@ export const databaseService = {
     return { data: data as Conversation | null, error };
   },
 
-  async updateConversation(conversationId: string, updates: Partial<Conversation>) {
+  async updateConversation(conversationId: string, updates: Partial<Conversation>): Promise<DatabaseResponse<Conversation>> {
     const { data, error } = await supabase
       .from('conversations')
       .update(updates)
@@ -99,7 +148,30 @@ export const databaseService = {
     return { data: data as Conversation | null, error };
   },
 
-  async getFavoriteExcursions(userId: string) {
+  async incrementMessageCount(conversationId: string): Promise<DatabaseResponse<Conversation>> {
+    const { data: currentConv, error: fetchError } = await supabase
+      .from('conversations')
+      .select('message_count')
+      .eq('id', conversationId)
+      .maybeSingle();
+
+    if (fetchError || !currentConv) {
+      return { data: null, error: fetchError };
+    }
+
+    const { data, error } = await supabase
+      .from('conversations')
+      .update({
+        message_count: currentConv.message_count + 1,
+        last_message_at: new Date().toISOString()
+      })
+      .eq('id', conversationId)
+      .select()
+      .single();
+    return { data: data as Conversation | null, error };
+  },
+
+  async getFavoriteExcursions(userId: string): Promise<DatabaseResponse<any[]>> {
     const { data, error } = await supabase
       .from('favorite_excursions')
       .select('*, excursions(*)')
@@ -108,7 +180,17 @@ export const databaseService = {
     return { data, error };
   },
 
-  async addFavoriteExcursion(userId: string, excursionId: string) {
+  async isFavorite(userId: string, excursionId: string): Promise<DatabaseResponse<FavoriteExcursion>> {
+    const { data, error } = await supabase
+      .from('favorite_excursions')
+      .select('*')
+      .eq('user_id', userId)
+      .eq('excursion_id', excursionId)
+      .maybeSingle();
+    return { data: data as FavoriteExcursion | null, error };
+  },
+
+  async addFavoriteExcursion(userId: string, excursionId: string): Promise<DatabaseResponse<FavoriteExcursion>> {
     const { data, error } = await supabase
       .from('favorite_excursions')
       .insert({ user_id: userId, excursion_id: excursionId })
@@ -117,7 +199,7 @@ export const databaseService = {
     return { data: data as FavoriteExcursion | null, error };
   },
 
-  async removeFavoriteExcursion(userId: string, excursionId: string) {
+  async removeFavoriteExcursion(userId: string, excursionId: string): Promise<{ error: PostgrestError | null }> {
     const { error } = await supabase
       .from('favorite_excursions')
       .delete()
