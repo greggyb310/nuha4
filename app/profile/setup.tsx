@@ -109,7 +109,7 @@ export default function ProfileSetupScreen() {
         return;
       }
 
-      router.replace('/');
+      router.replace('/home');
     } catch (err) {
       setError('An unexpected error occurred');
       setIsLoading(false);
@@ -280,7 +280,7 @@ export default function ProfileSetupScreen() {
 
           <Button
             title="Skip for Now"
-            onPress={() => router.replace('/')}
+            onPress={() => router.replace('/home')}
             variant="ghost"
             size="medium"
             style={styles.skipButton}

@@ -70,7 +70,7 @@ export default function SignUpScreen() {
         return;
       }
 
-      router.replace('/');
+      router.replace('/home');
     } catch (err) {
       setError('An unexpected error occurred');
       setIsLoading(false);
