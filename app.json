@@ -4,14 +4,8 @@
     "slug": "natureup-health",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#4A7C2E"
-    },
     "ios": {
       "bundleIdentifier": "com.natureup.health4",
       "supportsTablet": false,
