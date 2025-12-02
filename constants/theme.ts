@@ -1,13 +1,27 @@
 export const colors = {
   primary: '#4A7C2E',
+  primaryDark: '#3A6125',
+  primaryLight: '#5A8C3E',
   background: '#F5F8F3',
   textPrimary: '#2D3E1F',
   textSecondary: '#5A6C4A',
+  textTertiary: '#8A9B7A',
   accent: '#7FA957',
   surface: '#FFFFFF',
+  surfaceSecondary: '#FAFBF9',
+  border: '#E0E6DB',
+  borderLight: '#EDF1E9',
   error: '#D32F2F',
+  errorLight: '#FFEBEE',
   success: '#388E3C',
+  successLight: '#E8F5E9',
   warning: '#F57C00',
+  warningLight: '#FFF3E0',
+  info: '#1976D2',
+  infoLight: '#E3F2FD',
+  disabled: '#BDBDBD',
+  disabledBackground: '#F5F5F5',
+  overlay: 'rgba(0, 0, 0, 0.5)',
 };
 
 export const typography = {
