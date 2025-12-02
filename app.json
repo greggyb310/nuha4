@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "NatureUP Health",
+    "slug": "natureup-health",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4A7C2E"
+    },
+    "ios": {
+      "bundleIdentifier": "com.natureup.health4",
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "NatureUP Health needs access to your microphone for voice coaching sessions.",
+        "NSLocationWhenInUseUsageDescription": "NatureUP Health needs your location to suggest nearby nature excursions.",
+        "NSCameraUsageDescription": "NatureUP Health needs camera access to capture nature moments during excursions."
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow NatureUP Health to use your location to find nearby nature excursions."
+        }
+      ]
+    ],
+    "scheme": "natureup",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    }
+  }
+}
