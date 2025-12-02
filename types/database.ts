@@ -36,6 +36,8 @@ export interface UserProfile {
 }
 
 export interface UserPreferences {
+  activities?: string[];
+  difficulty?: 'easy' | 'moderate' | 'challenging';
   preferred_terrain?: 'forest' | 'beach' | 'mountain' | 'park' | 'urban';
   preferred_time?: 'morning' | 'afternoon' | 'evening';
   max_distance_km?: number;

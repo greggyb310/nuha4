@@ -14,6 +14,7 @@ export default function RootLayout() {
         <Stack.Screen name="auth/login" />
         <Stack.Screen name="auth/sign-up" />
         <Stack.Screen name="auth/reset-password" />
+        <Stack.Screen name="profile/setup" />
       </Stack>
       <StatusBar style="auto" />
     </AuthProvider>

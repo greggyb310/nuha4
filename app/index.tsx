@@ -7,13 +7,17 @@ import { colors, typography, spacing } from '../constants/theme';
 
 export default function Index() {
   const router = useRouter();
-  const { isAuthenticated, isLoading, user, signOut } = useAuth();
+  const { isAuthenticated, isLoading, user, profile, signOut } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
       router.replace('/auth/login');
+    } else if (!isLoading && isAuthenticated && profile) {
+      if (!profile.full_name || !profile.health_goals || profile.health_goals.length === 0) {
+        router.replace('/profile/setup');
+      }
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, isAuthenticated, profile]);
 
   if (isLoading) {
     return <LoadingSpinner fullScreen message="Loading..." />;
@@ -30,20 +34,39 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.greeting}>Hello!</Text>
+      <Text style={styles.greeting}>Hello{profile?.full_name ? `, ${profile.full_name.split(' ')[0]}` : ''}!</Text>
       <Text style={styles.title}>NatureUP Health</Text>
       <Text style={styles.subtitle}>Your personalized nature therapy companion</Text>
 
-      <View style={styles.userInfo}>
-        <Text style={styles.userEmail}>{user?.email}</Text>
-      </View>
+      {profile && (
+        <View style={styles.profileCard}>
+          <Text style={styles.profileLabel}>Email</Text>
+          <Text style={styles.profileValue}>{user?.email}</Text>
 
-      <Button
-        title="Sign Out"
-        onPress={handleSignOut}
-        variant="outline"
-        style={styles.signOutButton}
-      />
+          {profile.health_goals && profile.health_goals.length > 0 && (
+            <>
+              <Text style={[styles.profileLabel, styles.profileLabelSpaced]}>Health Goals</Text>
+              <Text style={styles.profileValue}>{profile.health_goals.join(', ')}</Text>
+            </>
+          )}
+        </View>
+      )}
+
+      <View style={styles.actions}>
+        <Button
+          title="Edit Profile"
+          onPress={() => router.push('/profile/setup')}
+          variant="secondary"
+          style={styles.editButton}
+        />
+
+        <Button
+          title="Sign Out"
+          onPress={handleSignOut}
+          variant="outline"
+          style={styles.signOutButton}
+        />
+      </View>
     </View>
   );
 }
@@ -61,6 +84,7 @@ const styles = StyleSheet.create({
     fontWeight: typography.weights.bold,
     color: colors.primary,
     marginBottom: spacing.lg,
+    textAlign: 'center',
   },
   title: {
     fontSize: typography.sizes['2xl'],
@@ -74,18 +98,41 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     textAlign: 'center',
     lineHeight: typography.lineHeights.normal * typography.sizes.base,
+    marginBottom: spacing.xl,
   },
-  userInfo: {
-    marginTop: spacing.xl,
-    padding: spacing.md,
+  profileCard: {
+    width: '100%',
+    maxWidth: 400,
+    padding: spacing.lg,
     backgroundColor: colors.surface,
-    borderRadius: spacing.sm,
+    borderRadius: spacing.md,
+    marginBottom: spacing.lg,
   },
-  userEmail: {
-    fontSize: typography.sizes.sm,
+  profileLabel: {
+    fontSize: typography.sizes.xs,
+    fontWeight: typography.weights.semibold,
     color: colors.textSecondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: spacing.xs,
+  },
+  profileLabelSpaced: {
+    marginTop: spacing.md,
+  },
+  profileValue: {
+    fontSize: typography.sizes.base,
+    color: colors.textPrimary,
+    lineHeight: typography.lineHeights.normal * typography.sizes.base,
+  },
+  actions: {
+    width: '100%',
+    maxWidth: 400,
+    gap: spacing.sm,
+  },
+  editButton: {
+    width: '100%',
   },
   signOutButton: {
-    marginTop: spacing.lg,
+    width: '100%',
   },
 });
