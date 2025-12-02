@@ -8,8 +8,8 @@ A voice-first mobile health app focused on personalized outdoor excursions and n
 - React Native 0.81.5
 - React 19.1.0
 - expo-router v4
-- react-native-safe-area-context 5.6.2
-- react-native-screens 4.6.0
+- react-native-safe-area-context ~5.6.0
+- react-native-screens ~4.16.0
 - Supabase (Auth + Database)
 - OpenAI Assistants API
 - TypeScript
