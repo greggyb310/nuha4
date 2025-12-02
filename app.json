@@ -31,7 +31,9 @@
       },
       "eas": {
         "projectId": "your-project-id-here"
-      }
+      },
+      "supabaseUrl": "https://shdakxvwvnmhkofdjlxs.supabase.co",
+      "supabaseAnonKey": "PLACEHOLDER_UPDATE_WITH_REAL_KEY"
     }
   }
 }
